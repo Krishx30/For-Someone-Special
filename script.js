@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
         isMidnight = true;
     }
 
+    // Clean up stale key from prior version
+    localStorage.removeItem('unlocked');
+
     // --- Configuration ---
     const startDate = new Date('2025-08-03T00:00:00');
 
@@ -107,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Skip lock screen if already unlocked before (returning visitor)
-    if (localStorage.getItem('unlocked') === 'true') {
+    if (sessionStorage.getItem('unlocked') === 'true') {
         lockScreen.style.display = 'none';
         appContainer.classList.add('unlocked');
         document.getElementById('story-section').classList.add('start-story');
@@ -127,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function unlockSequence() {
         lockInput.blur();
-        localStorage.setItem('unlocked', 'true');
+        sessionStorage.setItem('unlocked', 'true');
 
         // Glitch the prompt text AND the entire lock screen
         document.querySelector('.lock-prompt').classList.add('glitching');
