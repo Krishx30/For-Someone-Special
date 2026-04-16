@@ -539,8 +539,9 @@ body.midnight-theme {
 }
 
 #cli-input {
-    background: transparent;
+    background: rgba(255, 105, 180, 0.1);
     border: none;
+    border-bottom: 2px solid transparent;
     outline: none;
     color: #ce9178;
     font-family: 'Fira Code', monospace;
@@ -548,6 +549,16 @@ body.midnight-theme {
     flex-grow: 1;
     caret-color: #ff2a5f;
     margin-left: 8px;
+    padding: 2px 5px;
+    animation: blink-border 1s step-end infinite;
+}
+
+#cli-input::placeholder {
+    color: rgba(206, 145, 120, 0.4);
+}
+
+@keyframes blink-border {
+    50% { border-bottom-color: #ff2a5f; }
 }
 
 @media (max-width: 500px) {
