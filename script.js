@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // --- Midnight Theme Logic ---
     let isMidnight = false;
     const currentHour = new Date().getHours();
@@ -7,18 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('midnight-theme');
         isMidnight = true;
     }
-    
+
     // --- Configuration ---
     const startDate = new Date('2025-08-03T00:00:00');
-    
+
     // DOM Elements
     const typewriterElement = document.getElementById('typewriter-text');
     const loveSection = document.getElementById('love-section');
     const appContainer = document.getElementById('main-app');
-    
+
     const lockScreen = document.getElementById('lock-screen');
     const lockInput = document.getElementById('lock-input');
-    
+
     const audio = document.getElementById('bg-music');
     const vinylIcon = document.getElementById('vinyl-icon');
     const vinylToggle = document.getElementById('vinyl-toggle');
@@ -26,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Audio Player Logic ---
     let isPlaying = false;
     audio.volume = 0; // start at 0 for fade-in
-    
+
     // Check local storage so music keeps playing if they go to the gallery page
     if (localStorage.getItem('musicPlaying') === 'true') {
         isPlaying = true;
         vinylIcon.classList.add('spinning');
         audio.volume = 0.5;
-        
+
         const savedTime = localStorage.getItem('audioTime');
         if (savedTime) {
             audio.currentTime = parseFloat(savedTime);
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 200);
     }
-    
+
     function fadeOutAudio() {
         let vol = audio.volume;
         let fade = setInterval(() => {
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lock Screen Logic ---
     const MAGIC_DATE = "08032025";
-    
+
     lockScreen.addEventListener('click', () => {
         lockInput.focus();
     });
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Glitch sequence
         lockInput.blur();
         document.querySelector('.lock-prompt').classList.add('glitching');
-        
+
         // Start music automatically if they unlock it
         if (!isPlaying) {
             audio.play().then(() => {
@@ -121,18 +121,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 vinylIcon.classList.add('spinning');
                 localStorage.setItem('musicPlaying', 'true');
                 isPlaying = true;
-            }).catch(()=> {
+            }).catch(() => {
                 // Browser might still block until explicit click, that's fine
             });
         }
-        
+
         // Wait 800ms for glitch to display beautifully, then hide and start
         setTimeout(() => {
             lockScreen.style.opacity = '0';
             setTimeout(() => {
                 lockScreen.style.display = 'none';
                 appContainer.classList.add('unlocked');
-                
+
                 // Start the main typing story
                 document.getElementById('story-section').classList.add('start-story');
                 setTimeout(typeWriter, 500);
@@ -172,28 +172,28 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
     let i = 0;
     let isTag = false;
     let text = storyHtml.trim();
-    
+
     function typeWriter() {
         if (i < text.length) {
             let currentStr = text.slice(0, i + 1);
-            
+
             if (text.charAt(i) === '<') isTag = true;
             if (text.charAt(i) === '>') isTag = false;
-            
-            if (text.charAt(i) === '&' && text.slice(i, i+4) === '&lt;') {
-                 i += 3; 
-                 currentStr = text.slice(0, i + 1);
+
+            if (text.charAt(i) === '&' && text.slice(i, i + 4) === '&lt;') {
+                i += 3;
+                currentStr = text.slice(0, i + 1);
             }
-            
+
             typewriterElement.innerHTML = currentStr;
             i++;
-            
+
             let speed = isTag ? 0 : Math.random() * 40 + 30;
-            
-            if (!isTag && (text.charAt(i-1) === '.' || text.charAt(i-1) === '?' || text.charAt(i-1) === ';')) {
+
+            if (!isTag && (text.charAt(i - 1) === '.' || text.charAt(i - 1) === '?' || text.charAt(i - 1) === ';')) {
                 speed = 400;
             }
-            if (!isTag && text.charAt(i-1) === '\n') {
+            if (!isTag && text.charAt(i - 1) === '\n') {
                 speed = 250;
             }
 
@@ -226,13 +226,13 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
         if (e.key === 'Enter') {
             const val = cliInput.value.trim().toLowerCase();
             cliInput.value = '';
-            
+
             if (!val) return;
-            
+
             // Hide CLI while typing command output
             document.getElementById('interactive-cli').classList.remove('active');
             document.getElementById('type-cursor').style.display = 'inline';
-            
+
             if (val === 'help') {
                 appendTerminalLine("\n> help\nAvailable commands: <span class='keyword'>reasons</span>, <span class='keyword'>memories</span>\n");
             } else if (val === 'reasons') {
@@ -240,10 +240,13 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
             } else if (val === 'memories') {
                 appendTerminalLine("\n> memories\nAccessing memories...\n");
                 setTimeout(() => {
-                    document.getElementById('love-section').style.display = 'flex';
-                    // Force reflow
-                    void document.getElementById('love-section').offsetWidth;
-                    document.getElementById('love-section').classList.add('visible');
+                    const ls = document.getElementById('love-section');
+                    ls.style.display = 'flex';
+                    ls.style.visibility = 'visible';
+                    // requestAnimationFrame to allow a paint cycle before applying opacity
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => ls.classList.add('visible'));
+                    });
                 }, 1500);
             } else {
                 appendTerminalLine(`\n> ${val}\nCommand not found: ${val}. Type 'help'.\n`);
@@ -252,10 +255,10 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
     });
 
     function appendTerminalLine(str) {
-        text += str; 
-        typeWriter(); 
+        text += str;
+        typeWriter();
     }
-    
+
     // --- Timer Logic ---
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
@@ -265,7 +268,7 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
     function updateTimer() {
         const now = new Date();
         const diff = now - startDate;
-        const past = Math.max(0, diff); 
+        const past = Math.max(0, diff);
 
         const days = Math.floor(past / (1000 * 60 * 60 * 24));
         const hours = Math.floor((past % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -284,25 +287,25 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
     // --- Background Canvas Animations (Terminal Bits/Petals) with Physics ---
     const canvas = document.getElementById('falling-petals');
     const ctx = canvas.getContext('2d');
-    
+
     let width, height;
     let petals = [];
-    
+
     // Track pointer coordinates for interactive physics
     let mouse = { x: -1000, y: -1000 };
-    
+
     window.addEventListener('mousemove', (e) => {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
     });
-    
+
     window.addEventListener('touchmove', (e) => {
         if (e.touches.length > 0) {
             mouse.x = e.touches[0].clientX;
             mouse.y = e.touches[0].clientY;
         }
     });
-    
+
     // Reset mouse pos when off screen
     window.addEventListener('mouseout', () => {
         mouse.x = -1000;
@@ -313,20 +316,20 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
     }
-    
+
     window.addEventListener('resize', resize);
     resize();
 
     class Petal {
         constructor() {
             this.reset();
-            this.y = Math.random() * height; 
+            this.y = Math.random() * height;
         }
-        
+
         reset() {
             this.x = Math.random() * width;
             this.y = -20;
-            this.size = Math.random() * 3 + 1; 
+            this.size = Math.random() * 3 + 1;
             this.speedY = Math.random() * 1 + 0.5;
             this.speedX = Math.random() * 0.5 - 0.25;
             this.color = `rgba(255, 105, 180, ${Math.random() * 0.3 + 0.1})`;
@@ -341,18 +344,18 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
             let dx = mouse.x - this.x;
             let dy = mouse.y - this.y;
             let distance = Math.sqrt(dx * dx + dy * dy);
-            
+
             let interactRadius = 150; // The force field size
-            
+
             if (distance < interactRadius) {
                 // Calculate push force based on how close they are
                 let forceDirectionX = -dx / distance;
                 let forceDirectionY = -dy / distance;
                 let forceMultiplier = (interactRadius - distance) / interactRadius;
-                
+
                 // Set max repel force
-                let repelSpeed = 5; 
-                
+                let repelSpeed = 5;
+
                 this.x += forceDirectionX * forceMultiplier * repelSpeed;
                 this.y += forceDirectionY * forceMultiplier * repelSpeed;
             }

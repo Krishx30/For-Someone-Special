@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Resume music seamlessly if they were playing it on the main page
     if (localStorage.getItem('musicPlaying') === 'true') {
         isPlaying = true;
-        isPlaying = true;
         vinylIcon.classList.add('spinning');
         audio.volume = 0.5;
         
@@ -182,12 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPrev = document.getElementById('lightbox-prev');
     const btnNext = document.getElementById('lightbox-next');
     
-    // Gather all polaroid images in an array
-    const polaroidImages = Array.from(document.querySelectorAll('.polaroid-img'));
+    // Gather only actual photo polaroid images (exclude the secret video card)
+    const polaroidCards = Array.from(document.querySelectorAll('.polaroid-card:not(.secret-polaroid)'));
+    const polaroidImages = polaroidCards.map(card => card.querySelector('.polaroid-img'));
     let currentImageIndex = 0;
 
-    // Open lightbox when a polaroid is clicked
-    document.querySelectorAll('.polaroid-card').forEach((card, index) => {
+    // Open lightbox when a polaroid is clicked (not the secret one)
+    polaroidCards.forEach((card, index) => {
         card.addEventListener('click', () => {
             currentImageIndex = index;
             updateLightboxImage();

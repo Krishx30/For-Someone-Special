@@ -217,11 +217,13 @@ canvas#falling-petals {
     align-items: center;
     width: 100%;
     opacity: 0;
+    visibility: hidden;
     transition: opacity 2s ease-in;
 }
 
 .love-section.visible {
     opacity: 1;
+    visibility: visible;
 }
 
 .heart-pulse-container {
@@ -501,6 +503,12 @@ canvas#falling-petals {
 body.midnight-theme {
     background: #0d0014;
 }
+.midnight-theme #lock-screen {
+    background: #0d0014;
+}
+.midnight-theme .lock-prompt {
+    color: #d966ff;
+}
 .midnight-theme .code-window, .midnight-theme .message-container {
     background: #140524;
     border-color: #2a0a38;
@@ -516,6 +524,7 @@ body.midnight-theme {
     animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
     color: #ff2a5f !important;
     text-shadow: 2px 2px #ffb6c1, -2px -2px #ff69b4;
+    will-change: transform;
 }
 
 @keyframes glitch {
@@ -529,13 +538,21 @@ body.midnight-theme {
 
 /* === Interactive CLI === */
 #interactive-cli {
-    display: none; /* revealed via JS */
-    margin-top: 10px;
+    display: none;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    padding: 8px 10px;
+    background: rgba(255, 42, 95, 0.07);
+    border-left: 3px solid #ff2a5f;
+    border-radius: 0 4px 4px 0;
 }
 
 #interactive-cli.active {
     display: flex;
     align-items: center;
+    animation: fadeIn 0.3s ease;
 }
 
 #cli-input {
