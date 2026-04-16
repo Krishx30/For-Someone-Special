@@ -88,8 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let fade = setInterval(() => {
             if (vol > 0.05) {
                 vol -= 0.05;
-                audio.volume = vol;
+                audio.volume = Math.max(0, vol);
             } else {
+                audio.volume = 0;
                 audio.pause();
                 clearInterval(fade);
             }
