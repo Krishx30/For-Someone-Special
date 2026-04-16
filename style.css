@@ -497,6 +497,63 @@ canvas#falling-petals {
     cursor: default;
 }
 
+/* === Midnight Theme === */
+body.midnight-theme {
+    background: #0d0014;
+}
+.midnight-theme .code-window, .midnight-theme .message-container {
+    background: #140524;
+    border-color: #2a0a38;
+}
+.midnight-theme .window-header {
+    background: #1a082e;
+    border-bottom-color: #2a0a38;
+}
+.midnight-theme .keyword { color: #ff007f; }
+
+/* === Matrix Glitch Animation === */
+.glitching {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+    color: #ff2a5f !important;
+    text-shadow: 2px 2px #ffb6c1, -2px -2px #ff69b4;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0) }
+    20% { transform: translate(-5px, 5px) }
+    40% { transform: translate(-5px, -5px) }
+    60% { transform: translate(5px, 5px) }
+    80% { transform: translate(5px, -5px) }
+    100% { transform: translate(0) }
+}
+
+/* === Interactive CLI === */
+#interactive-cli {
+    display: none; /* revealed via JS */
+    margin-top: 10px;
+}
+
+#interactive-cli.active {
+    display: flex;
+    align-items: center;
+}
+
+#cli-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ce9178;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    flex-grow: 1;
+    caret-color: #ff2a5f;
+    margin-left: 8px;
+}
+
+@media (max-width: 500px) {
+    #cli-input { font-size: 0.85rem; }
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }

@@ -47,13 +47,17 @@
                     <span class="window-title">p and t</span>
                 </div>
                 <div class="window-body">
-                    <div id="typewriter-text" class="typewriter"></div><span class="cursor">|</span>
+                    <div id="typewriter-text" class="typewriter"></div><span class="cursor" id="type-cursor">|</span>
+                    <div id="interactive-cli">
+                        <span class="sys-prompt" style="margin-left: 0;">user@home:~$</span> Type 'help' to continue:
+                        <input type="text" id="cli-input" autocomplete="off">
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Timer & Heart Section -->
-        <section class="love-section" id="love-section">
+        <section class="love-section" id="love-section" style="display: none;">
             <div class="heart-pulse-container">
                 <a href="gallery.html" class="heart-link">
                     <svg viewBox="0 0 9 9" class="pixel-heart animated-heart">

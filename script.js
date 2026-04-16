@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- Midnight Theme Logic ---
+    let isMidnight = false;
+    const currentHour = new Date().getHours();
+    if (currentHour >= 0 && currentHour < 5) {
+        document.body.classList.add('midnight-theme');
+        isMidnight = true;
+    }
+    
     // --- Configuration ---
     const startDate = new Date('2025-08-03T00:00:00');
     
@@ -102,9 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function unlockSequence() {
-        // Blur out lock screen
+        // Glitch sequence
         lockInput.blur();
-        lockScreen.style.opacity = '0';
+        document.querySelector('.lock-prompt').classList.add('glitching');
         
         // Start music automatically if they unlock it
         if (!isPlaying) {
@@ -118,18 +126,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
+        // Wait 800ms for glitch to display beautifully, then hide and start
         setTimeout(() => {
-            lockScreen.style.display = 'none';
-            appContainer.classList.add('unlocked');
-            
-            // Start the main typing story
-            document.getElementById('story-section').classList.add('start-story');
-            setTimeout(typeWriter, 500);
-        }, 1000);
+            lockScreen.style.opacity = '0';
+            setTimeout(() => {
+                lockScreen.style.display = 'none';
+                appContainer.classList.add('unlocked');
+                
+                // Start the main typing story
+                document.getElementById('story-section').classList.add('start-story');
+                setTimeout(typeWriter, 500);
+            }, 600);
+        }, 800);
     }
 
     // --- The Story text ---
-    const storyHtml = `
+    let storyHtml = `
 <span class="comment">/**</span>
 <span class="comment"> * THE CODE OF LOVE</span>
 <span class="comment"> */</span>
@@ -151,6 +163,10 @@ All I want to say is:
 Bu, I will love you <span class="keyword">forever and ever</span>;
 
 <span class="comment">// Keep scrolling... &lt;3</span>`;
+
+    if (isMidnight) {
+        storyHtml += `\n\n<span class="keyword">system:</span> It's late, you should be sleeping, but I love you... go to bed.`;
+    }
 
     // --- Typewriter Logic ---
     let i = 0;
@@ -183,10 +199,61 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
 
             setTimeout(typeWriter, speed);
         } else {
-            setTimeout(() => {
-                loveSection.classList.add('visible');
-            }, 800);
+            document.getElementById('type-cursor').style.display = 'none';
+            const cli = document.getElementById('interactive-cli');
+            const cliInput = document.getElementById('cli-input');
+            cli.classList.add('active');
+            cliInput.focus();
         }
+    }
+
+    // --- Interactive CLI Logic ---
+    const cliInput = document.getElementById('cli-input');
+    const reasons = [
+        "1) i love the way i'm with YOUU",
+        "2) i love that you have the most sweetest and the most bful soul",
+        "3) i admire your strength and you motivate me in so many ways",
+        "4) my bful baby draws so well, i see my dad in your eyes",
+        "5) how great you are with children ( giving me kids when )",
+        "6) i feel like the entire universe is in my arms when we hug",
+        "7) your voice has to be the sweetest sound I've ever heard",
+        "8) your smell, YOU SMELL SO FREAKING GOOD",
+        "9) your taste in music, you're like literally my goddess i pray you atp",
+        "10) your open mind and your acceptance, you forgive me and you love me so deeply muah"
+    ];
+
+    cliInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = cliInput.value.trim().toLowerCase();
+            cliInput.value = '';
+            
+            if (!val) return;
+            
+            // Hide CLI while typing command output
+            document.getElementById('interactive-cli').classList.remove('active');
+            document.getElementById('type-cursor').style.display = 'inline';
+            
+            if (val === 'help') {
+                appendTerminalLine("\n> help\nAvailable commands: <span class='keyword'>reasons</span>, <span class='keyword'>memories</span>\n");
+            } else if (val === 'reasons') {
+                appendTerminalLine("\n> reasons\nFetching records from heart...\n" + reasons.join('\n') + "\n");
+            } else if (val === 'memories') {
+                appendTerminalLine("\n> memories\nAccessing memories...\n");
+                setTimeout(() => {
+                    document.getElementById('love-section').style.display = 'flex';
+                    // Force reflow
+                    void document.getElementById('love-section').offsetWidth;
+                    document.getElementById('love-section').classList.add('visible');
+                }, 1500);
+            } else {
+                appendTerminalLine(`\n> ${val}\nCommand not found: ${val}. Type 'help'.\n`);
+            }
+        }
+    });
+
+    function appendTerminalLine(str) {
+        text += str; 
+        typeWriter(); 
     }
     
     // --- Timer Logic ---
