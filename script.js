@@ -99,6 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lock Screen Logic ---
     const MAGIC_DATE = "08032025";
 
+    // Skip lock screen if already unlocked before (returning visitor)
+    if (localStorage.getItem('unlocked') === 'true') {
+        lockScreen.style.display = 'none';
+        appContainer.classList.add('unlocked');
+        document.getElementById('story-section').classList.add('start-story');
+        setTimeout(typeWriter, 300);
+    }
+
     lockScreen.addEventListener('click', () => {
         lockInput.focus();
     });
@@ -110,11 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function unlockSequence() {
-        // Glitch sequence
         lockInput.blur();
-        document.querySelector('.lock-prompt').classList.add('glitching');
+        localStorage.setItem('unlocked', 'true');
 
-        // Start music automatically if they unlock it
+        // Glitch the prompt text AND the entire lock screen
+        document.querySelector('.lock-prompt').classList.add('glitching');
+        lockScreen.classList.add('glitch-screen');
+
+        // Start music automatically
         if (!isPlaying) {
             audio.play().then(() => {
                 fadeInAudio();
@@ -122,22 +133,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('musicPlaying', 'true');
                 isPlaying = true;
             }).catch(() => {
-                // Browser might still block until explicit click, that's fine
+                // Browser might still block until explicit click
             });
         }
 
-        // Wait 800ms for glitch to display beautifully, then hide and start
+        // The screenGlitch animation lasts 0.8s and fades to opacity:0
         setTimeout(() => {
-            lockScreen.style.opacity = '0';
-            setTimeout(() => {
-                lockScreen.style.display = 'none';
-                appContainer.classList.add('unlocked');
+            lockScreen.style.display = 'none';
+            appContainer.classList.add('unlocked');
+            document.getElementById('story-section').classList.add('start-story');
+            setTimeout(typeWriter, 500);
+        }, 900);
+    }
 
-                // Start the main typing story
-                document.getElementById('story-section').classList.add('start-story');
-                setTimeout(typeWriter, 500);
-            }, 600);
-        }, 800);
+    // --- Page Exit Transition ---
+    const heartLink = document.querySelector('.heart-link');
+    if (heartLink) {
+        heartLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.classList.add('page-exit');
+            setTimeout(() => {
+                window.location.href = heartLink.getAttribute('href');
+            }, 400);
+        });
     }
 
     // --- The Story text ---
@@ -186,6 +204,9 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
             }
 
             typewriterElement.innerHTML = currentStr;
+            // Auto-scroll the terminal body so text stays visible on mobile
+            const windowBody = typewriterElement.closest('.window-body');
+            if (windowBody) windowBody.scrollTop = windowBody.scrollHeight;
             i++;
 
             let speed = isTag ? 0 : Math.random() * 40 + 30;

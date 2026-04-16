@@ -174,6 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
     animateBg();
 
 
+
+
     // --- Lightbox Modal Logic ---
     const lightboxOverlay = document.getElementById('lightbox-overlay');
     const lightboxImg = document.getElementById('lightbox-img');
@@ -185,6 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const polaroidCards = Array.from(document.querySelectorAll('.polaroid-card:not(.secret-polaroid)'));
     const polaroidImages = polaroidCards.map(card => card.querySelector('.polaroid-img'));
     let currentImageIndex = 0;
+
+    // --- Staggered Polaroid Entrance ---
+    polaroidCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('visible');
+        }, 150 * index);
+    });
 
     // Open lightbox when a polaroid is clicked (not the secret one)
     polaroidCards.forEach((card, index) => {
@@ -265,7 +274,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (secretTrigger) {
         secretTrigger.addEventListener('click', () => {
             clickCount++;
-            
+
+            // Visual pulse feedback
+            secretTrigger.classList.remove('pulse');
+            void secretTrigger.offsetWidth; // force reflow to restart animation
+            secretTrigger.classList.add('pulse');
+
             clearTimeout(clickTimeout);
             
             if (clickCount >= 5) {
