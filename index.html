@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Code of Love &lt;3</title>
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <!-- Use only Fira Code for that authentic developer/terminal feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Secret Unlock Screen -->
+    <div id="lock-screen">
+        <div class="lock-prompt">Enter the magic date (MMDDYYYY):</div>
+        <div class="lock-input-container">
+            <span>> </span>
+            <input type="tel" id="lock-input" maxlength="8" autocomplete="off" autofocus>
+        </div>
+    </div>
+
+    <!-- Music Player Elements -->
+    <audio id="bg-music" src="music/Khoobsurat%20(feat.%20Nanku).mp3" loop></audio>
+    
+    <div class="vinyl-container" id="vinyl-toggle" title="Play our song">
+        <div class="vinyl-icon" id="vinyl-icon">
+            <div class="vinyl-center"></div>
+        </div>
+    </div>
+
+    <!-- Falling petals/bits canvas -->
+    <canvas id="falling-petals"></canvas>
+
+    <div class="app-container" id="main-app">
+        <!-- Story Section -->
+        <section class="story-section" id="story-section">
+            <div class="code-window">
+                <div class="window-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="window-title">p and t</span>
+                </div>
+                <div class="window-body">
+                    <div id="typewriter-text" class="typewriter"></div><span class="cursor">|</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timer & Heart Section -->
+        <section class="love-section" id="love-section">
+            <div class="heart-pulse-container">
+                <a href="gallery.html" class="heart-link">
+                    <svg viewBox="0 0 9 9" class="pixel-heart animated-heart">
+                        <rect x="1" y="1" width="2" height="1" fill="#ff2a5f" />
+                        <rect x="6" y="1" width="2" height="1" fill="#ff2a5f" />
+                        <rect x="0" y="2" width="9" height="3" fill="#ff2a5f" />
+                        <rect x="1" y="5" width="7" height="1" fill="#ff2a5f" />
+                        <rect x="2" y="6" width="5" height="1" fill="#ff2a5f" />
+                        <rect x="3" y="7" width="3" height="1" fill="#ff2a5f" />
+                        <rect x="4" y="8" width="1" height="1" fill="#ff2a5f" />
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="timer-container">
+                <h2 class="timer-title">> uptime --falling_in_love</h2>
+                <div id="timer-clock" class="timer-clock">
+                    <div class="time-box">
+                        <small>DAYS</small>
+                        <span id="days">0</span>
+                    </div>
+                    <div class="time-box">
+                        <small>HRS</small>
+                        <span id="hours">00</span>
+                    </div>
+                    <div class="time-box">
+                        <small>MINS</small>
+                        <span id="minutes">00</span>
+                    </div>
+                    <div class="time-box">
+                        <small>SECS</small>
+                        <span id="seconds">00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-container">
+                <div class="signature">
+                    <span class="sys-prompt">user@home:~$</span> echo "I Love You So Much <3"
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('SW registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

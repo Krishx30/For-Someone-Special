@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Memories &lt;3</title>
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Added Press Start 2P for the pixelated text effect -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #ff69b4;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 100;
+        }
+        .back-link:hover {
+            color: #ffb6c1;
+            text-decoration: underline;
+        }
+        
+        .gallery-header {
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            margin-top: 70px;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            color: #ff69b4;
+            text-shadow: 0 0 15px rgba(255,105,180,0.6);
+            line-height: 1.4;
+        }
+
+        /* Mobile adjustment for pixel font */
+        @media (max-width: 500px) {
+            .gallery-header { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Music Player Elements -->
+    <audio id="bg-music" src="music/Khoobsurat%20(feat.%20Nanku).mp3" loop></audio>
+    
+    <div class="vinyl-container" id="vinyl-toggle" title="Play our song">
+        <div class="vinyl-icon" id="vinyl-icon">
+            <div class="vinyl-center"></div>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-link"><- back to terminal</a>
+    
+    <h1 class="gallery-header">
+        OUR MEMORIES
+        <svg id="secret-trigger" viewBox="0 0 9 9" class="pixel-heart secret-heart" title="Shh...">
+            <rect x="1" y="1" width="2" height="1" fill="#ff2a5f" />
+            <rect x="6" y="1" width="2" height="1" fill="#ff2a5f" />
+            <rect x="0" y="2" width="9" height="3" fill="#ff2a5f" />
+            <rect x="1" y="5" width="7" height="1" fill="#ff2a5f" />
+            <rect x="2" y="6" width="5" height="1" fill="#ff2a5f" />
+            <rect x="3" y="7" width="3" height="1" fill="#ff2a5f" />
+            <rect x="4" y="8" width="1" height="1" fill="#ff2a5f" />
+        </svg>
+    </h1>
+
+    <div class="gallery-container">
+        
+        <div class="polaroid-card" style="transform: rotate(-3deg);">
+            <div class="polaroid-label">02/04/2026</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.33 AM.jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(2deg);">
+            <div class="polaroid-label">felt like the entire world was in my arms</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.33 AM (1).jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(-5deg);">
+            <div class="polaroid-label">cutest baby ever</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 2.15.47 AM.jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(4deg);">
+            <div class="polaroid-label">love it when u make that face</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM.jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(-1deg);">
+            <div class="polaroid-label">always need u to kiss me</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (1).jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(3deg);">
+            <div class="polaroid-label">the eyes i keep falling for</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (2).jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(-4deg);">
+            <div class="polaroid-label">back when our hearts interlinked</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (3).jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(1deg);">
+            <div class="polaroid-label">ur fav insta ka filter</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.35 AM.jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(-2deg);">
+            <div class="polaroid-label">first fest together</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.35 AM (1).jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(5deg);">
+            <div class="polaroid-label">first time mussiorie together</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.36 AM.jpeg" alt="Memory">
+        </div>
+
+        <div class="polaroid-card" style="transform: rotate(-3deg);">
+            <div class="polaroid-label">always my crybaby</div>
+            <img class="polaroid-img" src="p/WhatsApp Image 2026-04-17 at 1.56.36 AM (1).jpeg" alt="Memory">
+        </div>
+        
+    </div>
+
+    <!-- Lightbox Overlay -->
+    <div id="lightbox-overlay">
+        <div class="lightbox-close" id="lightbox-close">&times;</div>
+        <div class="lightbox-content">
+            <img class="lightbox-img" id="lightbox-img" src="" alt="Expanded Memory">
+            <div class="lightbox-controls">
+                <button class="lightbox-btn prev" id="lightbox-prev">&lt;</button>
+                <button class="lightbox-btn next" id="lightbox-next">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secret Video Overlay -->
+    <div id="easter-egg-overlay">
+        <div class="lightbox-close" id="secret-close">&times;</div>
+        <div class="polaroid-card secret-polaroid">
+            <div class="polaroid-label">my fav video of us</div>
+            <video id="secret-video" class="polaroid-img" style="object-fit: contain; background: #000;" src="video/WhatsApp%20Video%202026-04-17%20at%202.23.38%20AM.mp4" controls playsinline></video>
+        </div>
+    </div>
+
+    <!-- Falling petals/bits canvas -->
+    <canvas id="falling-petals"></canvas>
+
+    <script src="gallery.js"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('SW registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

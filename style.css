@@ -1,0 +1,526 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0c;
+    min-height: 100vh;
+    font-family: 'Fira Code', monospace;
+    color: #e0e0e0;
+    overflow-x: hidden;
+}
+
+/* === Background Animations === */
+canvas#falling-petals {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+}
+
+.app-container {
+    padding: 20px 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    opacity: 0; /* Hidden initially, revealed by unlock script */
+    transition: opacity 1.5s ease-in;
+}
+
+.app-container.unlocked {
+    opacity: 1;
+}
+
+/* === Lock Screen === */
+#lock-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0a0a0c;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease-out;
+}
+
+.lock-prompt {
+    font-size: 1.2rem;
+    color: #4ec9b0;
+    margin-bottom: 20px;
+}
+
+.lock-input-container {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #ce9178;
+}
+
+#lock-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ce9178;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.5rem;
+    width: 150px;
+    caret-color: #ff2a5f;
+}
+
+/* === Audio Player === */
+.vinyl-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    cursor: pointer;
+    background: rgba(10, 10, 12, 0.8);
+    border: 1px solid #333;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vinyl-container:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(255, 105, 180, 0.5);
+}
+
+.vinyl-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+        #111,
+        #111 2px,
+        #222 3px,
+        #222 4px
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
+}
+
+.vinyl-center {
+    width: 10px;
+    height: 10px;
+    background: #ff69b4;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.spinning {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* === Code Story Section === */
+.story-section {
+    width: 100%;
+    margin-bottom: 30px;
+    opacity: 0;
+}
+
+.story-section.start-story {
+    animation: fadeIn 1s forwards ease-in;
+}
+
+.code-window {
+    background: #111115;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 105, 180, 0.05);
+    overflow: hidden;
+}
+
+.window-header {
+    background: #1a1a20;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.window-title {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.8rem;
+    color: #888;
+    transform: translateX(-20px);
+}
+
+.window-body {
+    padding: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+    min-height: 250px;
+}
+
+.cursor {
+    font-weight: bold;
+    color: #ff2a5f;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Syntax Highlight */
+.comment { color: #ff69b4; font-style: italic; }
+.keyword { color: #c586c0; }
+.string { color: #ce9178; }
+
+/* === Heart & Timer Section === */
+.love-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 2s ease-in;
+}
+
+.love-section.visible {
+    opacity: 1;
+}
+
+.heart-pulse-container {
+    margin: 30px 0;
+}
+
+.heart-link {
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.heart-link:hover {
+    transform: scale(1.1);
+}
+
+.pixel-heart {
+    width: 55px;
+    height: 55px;
+    shape-rendering: crispEdges;
+    filter: drop-shadow(0 0 15px rgba(255, 42, 95, 0.6));
+    animation: heartbeat 1.2s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.3); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.3); }
+    70% { transform: scale(1); }
+}
+
+/* Timer */
+.timer-container {
+    text-align: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.timer-title {
+    font-weight: 500;
+    color: #ffb6c1;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    text-align: left;
+    margin-left: 10%;
+}
+
+.timer-clock {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.time-box {
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    min-width: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.time-box span {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #dcdcaa;
+    margin-top: 5px;
+}
+
+.time-box small {
+    color: #569cd6;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+/* Message / Signature */
+.message-container {
+    text-align: left;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #111115;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+
+.signature {
+    font-size: 1rem;
+    color: #ce9178;
+    word-break: break-all;
+}
+
+.sys-prompt {
+    color: #ff69b4;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* === Gallery Polaroid Styles === */
+.gallery-container {
+    padding: 50px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.polaroid-card {
+    background: #fff;
+    padding: 10px 10px 30px 10px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+    transition: transform 0.3s ease, z-index 0s;
+    position: relative;
+    width: 250px;
+    cursor: pointer;
+}
+
+.polaroid-card:hover {
+    transform: scale(1.05) rotate(0deg) !important;
+    z-index: 20 !important;
+}
+
+.polaroid-label {
+    background: #ffb6c1;
+    color: #000;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    position: absolute;
+    top: -12px;
+    left: 15px;
+    transform: rotate(-3deg);
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    font-weight: bold;
+    z-index: 5;
+    border: 1px dashed rgba(0,0,0,0.2);
+}
+
+.polaroid-img {
+    width: 100%;
+    height: 250px;
+    background-color: #333;
+    object-fit: cover;
+    display: block;
+    border: 1px solid #ddd;
+}
+
+/* === Lightbox Modal === */
+#lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    display: none; /* Flex when active */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#lightbox-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 80vh;
+}
+
+.lightbox-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border: 4px solid #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 25px rgba(255, 105, 180, 0.3);
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    font-family: sans-serif;
+    transition: color 0.2s;
+}
+
+.lightbox-close:hover { color: #ff69b4; }
+
+.lightbox-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none; /* Let clicks pass through center */
+}
+
+.lightbox-btn {
+    pointer-events: auto;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: monospace;
+    transition: background 0.2s;
+}
+
+.lightbox-btn:hover { background: rgba(255, 105, 180, 0.7); }
+
+.lightbox-btn.prev { transform: translateX(-60px); }
+.lightbox-btn.next { transform: translateX(60px); }
+
+/* === Easter Egg === */
+.secret-heart {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    shape-rendering: crispEdges;
+    cursor: crosshair;
+    transition: transform 0.1s;
+}
+
+.secret-heart:active {
+    transform: scale(0.8);
+}
+
+#easter-egg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 20000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#easter-egg-overlay.active {
+    display: flex;
+    animation: fadeIn 0.4s ease;
+}
+
+.secret-polaroid {
+    max-width: 90vw;
+    width: 600px;
+    transform: rotate(0deg) !important;
+    cursor: default;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsiveness */
+@media (min-width: 600px) {
+    .window-body { font-size: 1rem; }
+    .timer-clock { gap: 20px; }
+    .time-box { min-width: 90px; padding: 15px; }
+    .time-box span { font-size: 2.2rem; }
+    .timer-title { margin-left: auto; text-align: center; }
+}
+
+@media (max-width: 500px) {
+    .time-box { min-width: 60px; padding: 10px; }
+    .time-box span { font-size: 1.4rem; }
+    .window-body { font-size: 0.85rem; }
+    
+    .lightbox-btn {
+        padding: 5px 10px;
+        font-size: 1.5rem;
+    }
+    .lightbox-btn.prev { transform: translateX(-10px); }
+    .lightbox-btn.next { transform: translateX(10px); }
+}
