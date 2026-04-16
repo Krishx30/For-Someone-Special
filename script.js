@@ -98,7 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lock Screen Logic ---
-    const MAGIC_DATE = "08032025";
+    // Hash of the magic date so it's not readable in source code
+    const MAGIC_HASH = 'ac272bd1f7ce37039af72b443a53d8f24f364bb1343ab9f2af9907e1eca0d948';
+
+    async function sha256(str) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     // Skip lock screen if already unlocked before (returning visitor)
     if (localStorage.getItem('unlocked') === 'true') {
@@ -112,8 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lockInput.focus();
     });
 
-    lockInput.addEventListener('input', (e) => {
-        if (e.target.value === MAGIC_DATE) {
+    lockInput.addEventListener('input', async (e) => {
+        const hash = await sha256(e.target.value);
+        if (hash === MAGIC_HASH) {
             unlockSequence();
         }
     });
@@ -244,12 +251,19 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
         "10) your open mind and your acceptance, you forgive me and you love me so deeply muah"
     ];
 
+    // Escape HTML to prevent XSS from CLI input
+    function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
     cliInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const val = cliInput.value.trim().toLowerCase();
             cliInput.value = '';
 
             if (!val) return;
+
+            const safeVal = escapeHtml(val);
 
             // Hide CLI while typing command output
             document.getElementById('interactive-cli').classList.remove('active');
@@ -265,13 +279,12 @@ Bu, I will love you <span class="keyword">forever and ever</span>;
                     const ls = document.getElementById('love-section');
                     ls.style.display = 'flex';
                     ls.style.visibility = 'visible';
-                    // requestAnimationFrame to allow a paint cycle before applying opacity
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => ls.classList.add('visible'));
                     });
                 }, 1500);
             } else {
-                appendTerminalLine(`\n> ${val}\nCommand not found: ${val}. Type 'help'.\n`);
+                appendTerminalLine(`\n> ${safeVal}\nCommand not found: ${safeVal}. Type 'help'.\n`);
             }
         }
     });
