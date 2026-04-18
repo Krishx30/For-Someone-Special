@@ -3,168 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Memories &lt;3</title>
-    <meta name="theme-color" content="#0a0a0c">
+    <title>Our Memories 💕</title>
+    <meta name="theme-color" content="#080810">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Added Press Start 2P for the pixelated text effect -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    
-    <style>
-        .back-link {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #ff69b4;
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            z-index: 100;
-        }
-        .back-link:hover {
-            color: #ffb6c1;
-            text-decoration: underline;
-        }
-        
-        .gallery-header {
-            font-family: 'Press Start 2P', cursive;
-            text-align: center;
-            margin-top: 70px;
-            margin-bottom: 40px;
-            font-size: 2rem;
-            color: #ff69b4;
-            text-shadow: 0 0 15px rgba(255,105,180,0.6);
-            line-height: 1.4;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Press+Start+2P&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #080810;
+    --pink: #ff2a5f;
+    --pink-soft: #ff6b9d;
+    --pink-pale: #ffb3cc;
+    --pink-glow: rgba(255,42,95,0.22);
+    --text-light: #e8e8f8;
+    --text-dim: #8888aa;
+    --surface: #f5f0ea;
+    --font-pixel: 'Press Start 2P', cursive;
+    --font-hand: 'Caveat', cursive;
+    --font-code: 'Fira Code', monospace;
+    --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+    --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);min-height:100vh;font-family:var(--font-code);overflow-x:hidden;color:var(--text-light);}
+::selection{background:var(--pink-glow);color:#fff;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--pink);border-radius:3px;}
 
-        /* Mobile adjustment for pixel font */
-        @media (max-width: 500px) {
-            .gallery-header { font-size: 1.2rem; }
-        }
-    </style>
+/* Ambient */
+.ambient-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.ambient-orb{position:absolute;border-radius:50%;filter:blur(90px);}
+.orb1{width:700px;height:700px;background:radial-gradient(circle,rgba(255,42,95,0.10) 0%,transparent 70%);top:-250px;left:-200px;animation:orbFloat1 14s ease-in-out infinite alternate;}
+.orb2{width:600px;height:600px;background:radial-gradient(circle,rgba(155,89,182,0.08) 0%,transparent 70%);bottom:-100px;right:-150px;animation:orbFloat2 18s ease-in-out infinite alternate;}
+.orb3{width:500px;height:500px;background:radial-gradient(circle,rgba(0,212,170,0.05) 0%,transparent 70%);top:50%;left:45%;animation:orbFloat1 22s ease-in-out infinite alternate-reverse;}
+@keyframes orbFloat1{to{transform:translate(70px,50px) scale(1.12);}}
+@keyframes orbFloat2{to{transform:translate(-50px,-70px) scale(1.18);}}
+
+.grain-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");background-size:200px;animation:grainShift 0.5s steps(2) infinite;}
+@keyframes grainShift{0%{transform:translate(0,0);}33%{transform:translate(-2px,1px);}66%{transform:translate(1px,-2px);}100%{transform:translate(2px,-1px);}}
+
+#falling-petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+
+/* Vinyl */
+.vinyl-container{position:fixed;bottom:1.4rem;right:1.4rem;z-index:900;cursor:pointer;display:flex;align-items:center;gap:0.5rem;background:rgba(8,8,16,0.90);border:1px solid rgba(255,42,95,0.25);border-radius:50px;padding:0.5rem 1rem 0.5rem 0.5rem;backdrop-filter:blur(16px);transition:border-color 0.3s,box-shadow 0.3s,transform 0.3s;box-shadow:0 4px 24px rgba(0,0,0,0.5);user-select:none;}
+.vinyl-container:hover{border-color:var(--pink);box-shadow:0 4px 32px rgba(255,42,95,0.3);transform:translateY(-2px);}
+.vinyl-disc{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:conic-gradient(#111 0deg,#1a0010 60deg,#111 120deg,#200015 180deg,#111 240deg,#1a0010 300deg,#111 360deg);position:relative;border:2px solid #333;transition:border-color 0.3s,box-shadow 0.3s;}
+.vinyl-disc.spinning{animation:spin 3s linear infinite;border-color:var(--pink);box-shadow:0 0 14px rgba(255,42,95,0.55);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.vinyl-ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,0.07);top:50%;left:50%;transform:translate(-50%,-50%);}
+.vinyl-ring.r1{width:60%;height:60%;}
+.vinyl-ring.r2{width:30%;height:30%;border-color:rgba(255,42,95,0.25);}
+.vinyl-center-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:var(--pink);box-shadow:0 0 8px var(--pink);}
+.vinyl-label{font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);letter-spacing:0.04em;min-width:62px;transition:color 0.3s;}
+.vinyl-label.playing{color:var(--pink-soft);}
+
+/* Back */
+.back-link{position:fixed;top:1.4rem;left:1.4rem;z-index:900;color:var(--text-dim);text-decoration:none;font-family:var(--font-code);font-size:0.72rem;letter-spacing:0.08em;background:rgba(8,8,16,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:50px;padding:0.5rem 1rem 0.5rem 0.75rem;display:flex;align-items:center;gap:0.4rem;transition:color 0.3s,border-color 0.3s,transform 0.3s;box-shadow:0 4px 18px rgba(0,0,0,0.45);}
+.back-link:hover{color:var(--pink);border-color:rgba(255,42,95,0.4);transform:translateX(-3px);}
+
+/* Header */
+.gallery-header{position:relative;z-index:10;text-align:center;padding:7rem 1rem 2.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.gallery-title{font-family:var(--font-pixel);font-size:clamp(1rem,3vw,1.7rem);color:var(--pink-soft);text-shadow:0 0 20px rgba(255,42,95,0.7),0 0 40px rgba(255,42,95,0.3);display:flex;align-items:center;gap:0.9rem;letter-spacing:0.06em;line-height:1.5;animation:titleGlow 3s ease-in-out infinite alternate;}
+@keyframes titleGlow{from{text-shadow:0 0 20px rgba(255,42,95,0.7),0 0 40px rgba(255,42,95,0.3);}to{text-shadow:0 0 30px rgba(255,107,157,0.9),0 0 60px rgba(255,42,95,0.5),0 0 100px rgba(255,42,95,0.2);}}
+.secret-heart-btn{background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;transition:transform 0.2s;line-height:0;}
+.secret-heart-btn:hover{transform:scale(1.3) rotate(10deg);}
+.pixel-heart-sm{width:28px;height:28px;color:var(--pink);filter:drop-shadow(0 0 8px var(--pink));display:block;animation:heartPulse 1.6s ease-in-out infinite;}
+@keyframes heartPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+.pixel-heart-sm.burst{animation:heartBurst 0.35s ease forwards;}
+@keyframes heartBurst{0%{transform:scale(1);}40%{transform:scale(1.8);filter:drop-shadow(0 0 22px var(--pink));}100%{transform:scale(1);}}
+.gallery-subtitle{font-family:var(--font-code);font-size:0.68rem;color:var(--text-dim);letter-spacing:0.15em;opacity:0.7;}
+
+/* Grid */
+.gallery-container{position:relative;z-index:10;max-width:1300px;margin:0 auto;padding:1rem 2.5rem 7rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4rem 3rem;align-items:start;}
+
+/* Polaroid */
+.polaroid-card{position:relative;opacity:0;transform:rotate(var(--rot,0deg)) translateY(32px) scale(0.96);transition:opacity 0.6s var(--ease-smooth),transform 0.6s var(--ease-spring),box-shadow 0.4s var(--ease-smooth);cursor:pointer;will-change:transform,opacity;}
+.polaroid-card.visible{opacity:1;transform:rotate(var(--rot,0deg)) translateY(0) scale(1);}
+.polaroid-card:hover{transform:rotate(0deg) translateY(-12px) scale(1.04) !important;z-index:50;}
+
+/* Tape */
+.polaroid-tape{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:56px;height:26px;background:rgba(255,220,170,0.30);border-radius:2px;z-index:2;box-shadow:inset 0 0 0 1px rgba(255,210,140,0.2);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 2px,transparent 2px,transparent 7px);}
+.polaroid-tape.corner{top:-10px;left:auto;right:16px;transform:rotate(20deg);width:44px;height:20px;}
+
+/* Paper */
+.polaroid-inner{background:var(--surface);border-radius:2px;padding:10px 10px 0 10px;box-shadow:0 8px 32px rgba(0,0,0,0.65),0 2px 8px rgba(0,0,0,0.45);position:relative;overflow:hidden;}
+.polaroid-inner::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");mix-blend-mode:multiply;opacity:0.4;}
+.polaroid-card:hover .polaroid-inner{box-shadow:0 28px 80px rgba(0,0,0,0.75),0 6px 20px rgba(255,42,95,0.14);}
+
+/* Label above photo — pixel font, pink sticky note style */
+.polaroid-label{font-family:var(--font-pixel);font-size:0.5rem;color:#2a1a20;background:rgba(255,192,203,0.6);border:1px solid rgba(255,150,180,0.4);border-radius:4px;padding:6px 8px;margin-bottom:8px;line-height:1.7;letter-spacing:0.03em;position:relative;z-index:1;width:100%;word-break:break-word;box-shadow:0 2px 8px rgba(255,42,95,0.12),inset 0 1px 0 rgba(255,255,255,0.3);}
+
+/* Photo */
+.polaroid-img-wrap{position:relative;overflow:hidden;background:#0a0a12;aspect-ratio:4/5;z-index:1;}
+.polaroid-img-wrap::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.22) 100%);}
+.polaroid-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.55s var(--ease-smooth),filter 0.4s var(--ease-smooth);filter:sepia(0.08) contrast(1.06) saturate(0.95);}
+.polaroid-card:hover .polaroid-img{transform:scale(1.06);filter:sepia(0) contrast(1.08) saturate(1.1);}
+.polaroid-bottom{height:18px;background:var(--surface);position:relative;z-index:1;}
+
+/* Lightbox */
+#lightbox-overlay{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.35s var(--ease-smooth);}
+#lightbox-overlay.active{opacity:1;pointer-events:all;}
+.lightbox-backdrop{position:absolute;inset:0;background:rgba(3,3,10,0.95);backdrop-filter:blur(22px) saturate(0.3);cursor:pointer;}
+.lb-close-btn{position:absolute;top:1.2rem;right:1.4rem;z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-light);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,border-color 0.2s,transform 0.2s;backdrop-filter:blur(8px);}
+.lb-close-btn:hover{background:rgba(255,42,95,0.2);border-color:var(--pink);transform:scale(1.1) rotate(90deg);}
+.lightbox-content{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:1rem;max-width:92vw;max-height:94vh;}
+.lightbox-polaroid{background:var(--surface);padding:10px 10px 0;border-radius:2px;box-shadow:0 36px 100px rgba(0,0,0,0.85);transform:scale(0.88);transition:transform 0.48s var(--ease-spring);}
+#lightbox-overlay.active .lightbox-polaroid{transform:scale(1);}
+.lightbox-label{font-family:var(--font-pixel);font-size:0.48rem;color:#2a1a20;background:rgba(255,192,203,0.6);border:1px solid rgba(255,150,180,0.4);border-radius:4px;padding:5px 8px;margin-bottom:8px;line-height:1.7;letter-spacing:0.03em;width:100%;text-align:center;word-break:break-word;}
+.lightbox-img{display:block;max-width:min(70vw,560px);max-height:min(60vh,520px);width:auto;height:auto;object-fit:contain;filter:sepia(0.06) contrast(1.04);border-radius:1px;transition:opacity 0.22s ease,transform 0.22s ease;}
+.lightbox-bottom{height:20px;background:var(--surface);}
+.lightbox-controls{display:flex;align-items:center;gap:1rem;z-index:5;}
+.lightbox-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-light);font-size:1.7rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,border-color 0.2s,transform 0.2s;backdrop-filter:blur(8px);}
+.lightbox-btn:hover{background:rgba(255,42,95,0.2);border-color:var(--pink);transform:scale(1.12);}
+.lightbox-dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:200px;justify-content:center;}
+.lightbox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;padding:0;transition:background 0.25s,width 0.25s,border-radius 0.25s,box-shadow 0.25s;}
+.lightbox-dot.active{background:var(--pink);width:20px;border-radius:3px;box-shadow:0 0 8px var(--pink);}
+
+/* Easter egg */
+#easter-egg-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s var(--ease-smooth);}
+#easter-egg-overlay.active{opacity:1;pointer-events:all;}
+.ee-backdrop{position:absolute;inset:0;background:rgba(3,3,10,0.97);backdrop-filter:blur(28px);cursor:pointer;}
+.ee-content{position:relative;z-index:5;max-width:320px;width:90vw;}
+.ee-polaroid{background:var(--surface);padding:10px 10px 0;border-radius:2px;box-shadow:0 28px 80px rgba(0,0,0,0.85);}
+.ee-label{font-family:var(--font-pixel);font-size:0.48rem;color:#2a1a20;background:rgba(255,192,203,0.6);border:1px solid rgba(255,150,180,0.4);border-radius:4px;padding:5px 8px;margin-bottom:8px;line-height:1.7;letter-spacing:0.03em;text-align:center;}
+.ee-video-wrap{aspect-ratio:9/16;max-height:58vh;background:#000;overflow:hidden;}
+.ee-video-wrap video{width:100%;height:100%;object-fit:contain;display:block;}
+.ee-bottom{height:20px;background:var(--surface);}
+
+/* Footer */
+.gallery-footer{position:relative;z-index:10;text-align:center;padding:1rem 1rem 5rem;display:flex;flex-direction:column;gap:0.5rem;align-items:center;}
+.footer-text{font-family:var(--font-pixel);font-size:0.48rem;color:var(--pink-soft);letter-spacing:0.12em;line-height:2;text-shadow:0 0 12px rgba(255,42,95,0.4);}
+.footer-code{font-family:var(--font-code);font-size:0.68rem;color:var(--text-dim);}
+
+/* Responsive */
+@media(max-width:680px){
+    .gallery-container{grid-template-columns:repeat(2,1fr);gap:2.8rem 1.2rem;padding:0 0.9rem 5rem;}
+    .gallery-header{padding:5.5rem 1rem 1.5rem;}
+    .gallery-title{font-size:0.85rem;}
+    .polaroid-label{font-size:0.4rem;}
+    .lightbox-img{max-width:90vw;max-height:54vh;}
+}
+@media(max-width:400px){
+    .gallery-container{grid-template-columns:1fr;max-width:300px;margin:0 auto;}
+}
+body.page-exit{animation:pageOut 0.4s var(--ease-smooth) forwards;}
+@keyframes pageOut{to{opacity:0;transform:scale(0.97);}}
+</style>
 </head>
 <body>
-    <!-- Music Player Elements -->
-    <audio id="bg-music" src="music/Khoobsurat%20(feat.%20Nanku).mp3" loop></audio>
-    
-    <div class="vinyl-container" id="vinyl-toggle" title="Play our song">
-        <div class="vinyl-icon" id="vinyl-icon">
-            <div class="vinyl-center"></div>
-        </div>
-    </div>
 
-    <a href="index.html" class="back-link"><- back to terminal</a>
-    
-    <h1 class="gallery-header">
+<div class="ambient-bg">
+    <div class="ambient-orb orb1"></div>
+    <div class="ambient-orb orb2"></div>
+    <div class="ambient-orb orb3"></div>
+</div>
+<div class="grain-overlay"></div>
+<canvas id="falling-petals"></canvas>
+
+<a href="index.html" class="back-link" id="back-link">← back to terminal</a>
+
+<audio id="bg-music" src="music/Khoobsurat (feat. Nanku).mp3" loop></audio>
+<div class="vinyl-container" id="vinyl-toggle" title="Play our song">
+    <div class="vinyl-disc" id="vinyl-icon">
+        <div class="vinyl-ring r1"></div>
+        <div class="vinyl-ring r2"></div>
+        <div class="vinyl-center-dot"></div>
+    </div>
+    <span class="vinyl-label" id="vinyl-label">▶ play</span>
+</div>
+
+<header class="gallery-header">
+    <h1 class="gallery-title">
         OUR MEMORIES
-        <svg id="secret-trigger" viewBox="0 0 9 9" class="pixel-heart secret-heart" title="Shh...">
-            <rect x="1" y="1" width="2" height="1" fill="#ff2a5f" />
-            <rect x="6" y="1" width="2" height="1" fill="#ff2a5f" />
-            <rect x="0" y="2" width="9" height="3" fill="#ff2a5f" />
-            <rect x="1" y="5" width="7" height="1" fill="#ff2a5f" />
-            <rect x="2" y="6" width="5" height="1" fill="#ff2a5f" />
-            <rect x="3" y="7" width="3" height="1" fill="#ff2a5f" />
-            <rect x="4" y="8" width="1" height="1" fill="#ff2a5f" />
-        </svg>
+        <button class="secret-heart-btn" id="secret-trigger" aria-label="Secret">
+            <svg viewBox="0 0 9 9" class="pixel-heart-sm">
+                <rect x="1" y="1" width="2" height="1" fill="currentColor"/>
+                <rect x="6" y="1" width="2" height="1" fill="currentColor"/>
+                <rect x="0" y="2" width="9" height="3" fill="currentColor"/>
+                <rect x="1" y="5" width="7" height="1" fill="currentColor"/>
+                <rect x="2" y="6" width="5" height="1" fill="currentColor"/>
+                <rect x="3" y="7" width="3" height="1" fill="currentColor"/>
+                <rect x="4" y="8" width="1" height="1" fill="currentColor"/>
+            </svg>
+        </button>
     </h1>
+    <p class="gallery-subtitle">// kritika &amp; sarthak — since 28.03.2025</p>
+</header>
 
-    <div class="gallery-container">
-        
-        <div class="polaroid-card" style="transform: rotate(-3deg);">
-            <div class="polaroid-label">02/04/2026</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.33 AM.jpeg" alt="Memory">
-        </div>
+<main class="gallery-container">
 
-        <div class="polaroid-card" style="transform: rotate(2deg);">
-            <div class="polaroid-label">felt like the entire world was in my arms</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.33 AM (1).jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(-5deg);">
-            <div class="polaroid-label">cutest baby ever</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 2.15.47 AM.jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(4deg);">
-            <div class="polaroid-label">love it when u make that face</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM.jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(-1deg);">
-            <div class="polaroid-label">always need u to kiss me</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (1).jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(3deg);">
-            <div class="polaroid-label">the eyes i keep falling for</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (2).jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(-4deg);">
-            <div class="polaroid-label">back when our hearts interlinked</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.34 AM (3).jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(1deg);">
-            <div class="polaroid-label">ur fav insta ka filter</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.35 AM.jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(-2deg);">
-            <div class="polaroid-label">first fest together</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.35 AM (1).jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(5deg);">
-            <div class="polaroid-label">first time mussiorie together</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.36 AM.jpeg" alt="Memory">
-        </div>
-
-        <div class="polaroid-card" style="transform: rotate(-3deg);">
-            <div class="polaroid-label">always my crybaby</div>
-            <img class="polaroid-img" loading="lazy" src="p/WhatsApp Image 2026-04-17 at 1.56.36 AM (1).jpeg" alt="Memory">
-        </div>
-        
-    </div>
-
-    <!-- Lightbox Overlay -->
-    <div id="lightbox-overlay">
-        <div class="lightbox-close" id="lightbox-close">&times;</div>
-        <div class="lightbox-content">
-            <img class="lightbox-img" id="lightbox-img" src="" alt="Expanded Memory">
-            <div class="lightbox-controls">
-                <button class="lightbox-btn prev" id="lightbox-prev">&lt;</button>
-                <button class="lightbox-btn next" id="lightbox-next">&gt;</button>
+    <div class="polaroid-card" data-rot="-3">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"from this tiny cutie… to my whole world today 🥺❤️"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image1.jpeg" alt="Memory" loading="lazy">
             </div>
+            <div class="polaroid-bottom"></div>
         </div>
     </div>
 
-    <!-- Secret Video Overlay -->
-    <div id="easter-egg-overlay">
-        <div class="lightbox-close" id="secret-close">&times;</div>
-        <div class="polaroid-card secret-polaroid">
-            <div class="polaroid-label">my fav video of us</div>
-            <video id="secret-video" class="polaroid-img" style="object-fit: contain; background: #000;" src="video/WhatsApp%20Video%202026-04-17%20at%202.23.38%20AM.mp4" controls playsinline></video>
+    <div class="polaroid-card" data-rot="2">
+        <div class="polaroid-tape corner"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"the moment time literally stopped for me… just you and me💋"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image2.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
         </div>
     </div>
 
-    <!-- Falling petals/bits canvas -->
-    <canvas id="falling-petals"></canvas>
+    <div class="polaroid-card" data-rot="-5">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"our stupid moments >>> everything else"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image3.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
 
-    <script src="gallery.js"></script>
-    <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => {
-                    console.log('SW registration failed: ', err);
-                });
-            });
+    <div class="polaroid-card" data-rot="4">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"you smiling like this… and me just falling for you again<3"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image4.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="-1">
+        <div class="polaroid-tape corner"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"every memory with you becomes my favorite one somehow"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image5.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="3">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"the place where it all started feeling real… us, finally together ❤️"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image6.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="-4">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"no plan, no reason… still one of my favorite days with you 🤍"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image7.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="1">
+        <div class="polaroid-tape corner"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"this… this is my safe place. always has been, always will be"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image8.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="-2">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"not perfect pictures… but perfect moments with you 💌"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image9.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="5">
+        <div class="polaroid-tape"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">I Love You<3</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image10.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+    <div class="polaroid-card" data-rot="-3">
+        <div class="polaroid-tape corner"></div>
+        <div class="polaroid-inner">
+            <div class="polaroid-label">"if peace had a face… it would look exactly like you 🤍"</div>
+            <div class="polaroid-img-wrap">
+                <img class="polaroid-img" src="p/image11.jpeg" alt="Memory" loading="lazy">
+            </div>
+            <div class="polaroid-bottom"></div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="gallery-footer">
+    <p class="footer-text">every picture tells our story ❤️</p>
+    <p class="footer-code">// kritika &amp; sarthak.love — since 28.03.2025</p>
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <button class="lb-close-btn" id="lightbox-close" aria-label="Close">✕</button>
+    <div class="lightbox-content">
+        <div class="lightbox-polaroid">
+            <div class="lightbox-label" id="lightbox-label"></div>
+            <img id="lightbox-img" src="" alt="memory" class="lightbox-img">
+            <div class="lightbox-bottom"></div>
+        </div>
+        <div class="lightbox-controls">
+            <button class="lightbox-btn" id="lightbox-prev" aria-label="Previous">‹</button>
+            <div class="lightbox-dots" id="lightbox-dots"></div>
+            <button class="lightbox-btn" id="lightbox-next" aria-label="Next">›</button>
+        </div>
+    </div>
+</div>
+
+<!-- Easter egg -->
+<div id="easter-egg-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="ee-backdrop" id="ee-backdrop"></div>
+    <button class="lb-close-btn" id="secret-close" aria-label="Close">✕</button>
+    <div class="ee-content">
+        <div class="ee-polaroid">
+            <div class="ee-label">my fav video of us 🎬</div>
+            <div class="ee-video-wrap">
+                <video id="secret-video" src="video/video.mp4" playsinline controls></video>
+            </div>
+            <div class="ee-bottom"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    if (new Date().getHours() < 5) document.body.style.setProperty('--bg','#03030a');
+
+    // ── Audio
+    const audio       = document.getElementById('bg-music');
+    const vinylDisc   = document.getElementById('vinyl-icon');
+    const vinylToggle = document.getElementById('vinyl-toggle');
+    const vinylLabel  = document.getElementById('vinyl-label');
+    let isPlaying = false;
+    audio.volume = 0;
+
+    function setVinylState(p) {
+        isPlaying = p;
+        vinylDisc.classList.toggle('spinning', p);
+        vinylLabel.textContent = p ? '♫ playing' : '▶ play';
+        vinylLabel.classList.toggle('playing', p);
+        localStorage.setItem('musicPlaying', p ? 'true' : 'false');
+    }
+    if (localStorage.getItem('musicPlaying') === 'true') {
+        const saved = parseFloat(localStorage.getItem('audioTime') || '0');
+        if (saved) audio.currentTime = saved;
+        audio.volume = 0.5;
+        audio.play().then(() => setVinylState(true)).catch(() => setVinylState(false));
+    }
+    vinylToggle.addEventListener('click', () => {
+        if (isPlaying) { fadeOut(); setVinylState(false); }
+        else { audio.play().then(() => { fadeIn(); setVinylState(true); }); }
+    });
+    audio.addEventListener('timeupdate', () => { if (isPlaying) localStorage.setItem('audioTime', audio.currentTime); });
+    function fadeIn() { let v=0; audio.volume=0; const t=setInterval(()=>{ v=Math.min(v+0.05,0.5); audio.volume=v; if(v>=0.5) clearInterval(t); },100); }
+    function fadeOut() { let v=audio.volume; const t=setInterval(()=>{ v=Math.max(v-0.05,0); audio.volume=v; if(v<=0){audio.pause();clearInterval(t);} },100); }
+
+    // ── Back link
+    const backLink = document.getElementById('back-link');
+    if (backLink) {
+        backLink.addEventListener('click', e => {
+            e.preventDefault();
+            document.body.classList.add('page-exit');
+            setTimeout(() => { window.location.href = backLink.href; }, 400);
+        });
+    }
+
+    // ── Cards entrance
+    const cards = Array.from(document.querySelectorAll('.polaroid-card'));
+    cards.forEach((card, i) => {
+        card.style.setProperty('--rot', parseFloat(card.dataset.rot||'0') + 'deg');
+        setTimeout(() => card.classList.add('visible'), 100 + i * 120);
+    });
+
+    // ── Lightbox
+    const overlay    = document.getElementById('lightbox-overlay');
+    const lbImg      = document.getElementById('lightbox-img');
+    const lbLabelEl  = document.getElementById('lightbox-label');
+    const lbClose    = document.getElementById('lightbox-close');
+    const lbBackdrop = document.getElementById('lightbox-backdrop');
+    const lbPrev     = document.getElementById('lightbox-prev');
+    const lbNext     = document.getElementById('lightbox-next');
+    const dotsWrap   = document.getElementById('lightbox-dots');
+    const imgEls     = cards.map(c => c.querySelector('.polaroid-img'));
+    const labels     = cards.map(c => (c.querySelector('.polaroid-label')||{}).textContent || '');
+    let current = 0;
+
+    cards.forEach((_,i) => {
+        const dot = document.createElement('button');
+        dot.className = 'lightbox-dot';
+        dot.setAttribute('aria-label','Photo '+(i+1));
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(dot);
+    });
+    function syncDots() { dotsWrap.querySelectorAll('.lightbox-dot').forEach((d,i) => d.classList.toggle('active',i===current)); }
+    function goTo(idx) {
+        current = ((idx%cards.length)+cards.length)%cards.length;
+        lbImg.style.opacity='0'; lbImg.style.transform='scale(0.95)';
+        setTimeout(()=>{ lbImg.src=imgEls[current].src; lbLabelEl.textContent=labels[current]; lbImg.style.opacity='1'; lbImg.style.transform='scale(1)'; },220);
+        syncDots();
+    }
+    function openLightbox(idx) {
+        current=idx; lbImg.src=imgEls[idx].src; lbLabelEl.textContent=labels[idx];
+        lbImg.style.opacity='1'; lbImg.style.transform='scale(1)';
+        syncDots(); overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow='hidden';
+    }
+    function closeLightbox() { overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+    cards.forEach((card,i) => card.addEventListener('click',()=>openLightbox(i)));
+    lbClose.addEventListener('click', closeLightbox);
+    lbBackdrop.addEventListener('click', closeLightbox);
+    lbNext.addEventListener('click', e=>{ e.stopPropagation(); goTo(current+1); });
+    lbPrev.addEventListener('click', e=>{ e.stopPropagation(); goTo(current-1); });
+    window.addEventListener('keydown', e=>{
+        if (!overlay.classList.contains('active')) return;
+        if (e.key==='ArrowRight') goTo(current+1);
+        else if (e.key==='ArrowLeft') goTo(current-1);
+        else if (e.key==='Escape') closeLightbox();
+    });
+    let swipeX=0;
+    overlay.addEventListener('touchstart',e=>{swipeX=e.changedTouches[0].screenX;},{passive:true});
+    overlay.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].screenX-swipeX; if(dx<-50) goTo(current+1); else if(dx>50) goTo(current-1); });
+
+    // ── Easter egg
+    const secretBtn  = document.getElementById('secret-trigger');
+    const eeOverlay  = document.getElementById('easter-egg-overlay');
+    const eeBackdrop = document.getElementById('ee-backdrop');
+    const eeClose    = document.getElementById('secret-close');
+    const eeVideo    = document.getElementById('secret-video');
+    const heartSvg   = secretBtn ? secretBtn.querySelector('.pixel-heart-sm') : null;
+    let taps=0, tapTimer;
+    if (secretBtn) {
+        secretBtn.addEventListener('click',()=>{
+            taps++;
+            if (heartSvg) { heartSvg.classList.remove('burst'); void heartSvg.offsetWidth; heartSvg.classList.add('burst'); }
+            clearTimeout(tapTimer);
+            if (taps>=5) {
+                taps=0;
+                if (isPlaying) { fadeOut(); setVinylState(false); }
+                eeOverlay.classList.add('active'); eeOverlay.setAttribute('aria-hidden','false');
+                eeVideo.play().catch(()=>{});
+            } else { tapTimer=setTimeout(()=>{taps=0;},1200); }
+        });
+    }
+    function closeEE() { eeOverlay.classList.remove('active'); eeOverlay.setAttribute('aria-hidden','true'); eeVideo.pause(); eeVideo.currentTime=0; }
+    if (eeClose)    eeClose.addEventListener('click', closeEE);
+    if (eeBackdrop) eeBackdrop.addEventListener('click', closeEE);
+
+    // ── Petal canvas
+    const canvas = document.getElementById('falling-petals');
+    const ctx    = canvas.getContext('2d');
+    let W, H, mx=-1000, my=-1000;
+    const petals = [];
+    window.addEventListener('mousemove',  e=>{ mx=e.clientX; my=e.clientY; });
+    window.addEventListener('touchmove',  e=>{ if(e.touches.length){mx=e.touches[0].clientX;my=e.touches[0].clientY;} },{passive:true});
+    window.addEventListener('mouseout',   ()=>{ mx=-1000; my=-1000; });
+    function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+    window.addEventListener('resize',resize); resize();
+
+    class Petal {
+        constructor(init){ this.type=Math.random()<0.55?'dot':Math.random()<0.55?'sparkle':'heart'; this.reset(); if(init) this.y=Math.random()*H; }
+        reset(){ this.x=Math.random()*W; this.y=-20; this.sz=Math.random()*3+1.5; this.vy=Math.random()*0.65+0.3; this.vx=Math.random()*0.35-0.175; this.a=Math.random()*Math.PI*2; this.da=(Math.random()-0.5)*0.035; const al=Math.random()*0.22+0.06; const rgb=Math.random()<0.65?'255,42,95':Math.random()<0.5?'195,155,211':'255,182,193'; this.color=`rgba(${rgb},${al})`; }
+        update(){ this.y+=this.vy; this.x+=this.vx+Math.sin(this.y*0.007)*0.3; this.a+=this.da; const dx=mx-this.x,dy=my-this.y,d=Math.hypot(dx,dy); if(d<110&&d>0){const f=(110-d)/110;this.x-=(dx/d)*f*3;this.y-=(dy/d)*f*3;} if(this.y>H+30) this.reset(); }
+        draw(){
+            ctx.save(); ctx.fillStyle=ctx.strokeStyle=this.color;
+            if(this.type==='dot'){ ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);ctx.fill(); }
+            else if(this.type==='sparkle'){ ctx.translate(this.x,this.y);ctx.rotate(this.a);ctx.lineWidth=1; for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(0,-this.sz*1.4);ctx.lineTo(0,this.sz*1.4);ctx.stroke();ctx.rotate(Math.PI/4);} }
+            else{ ctx.translate(this.x,this.y);const u=this.sz*0.48;ctx.fillRect(-u*2,-u*2,u*2,u);ctx.fillRect(u,-u*2,u*2,u);ctx.fillRect(-u*3,-u,u*6,u*2);ctx.fillRect(-u*2,u,u*5,u);ctx.fillRect(-u,u*2,u*3,u);ctx.fillRect(0,u*3,u,u); }
+            ctx.restore();
         }
-    </script>
+    }
+    for(let i=0;i<70;i++) petals.push(new Petal(true));
+    (function loop(){ ctx.clearRect(0,0,W,H); petals.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); })();
+});
+</script>
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+</script>
 </body>
 </html>

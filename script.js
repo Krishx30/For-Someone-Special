@@ -1,428 +1,431 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Midnight Theme Logic ---
-    let isMidnight = false;
+    // ── Midnight theme ────────────────────────────────────────────────────────
     const currentHour = new Date().getHours();
-    if (currentHour >= 0 && currentHour < 5) {
-        document.body.classList.add('midnight-theme');
-        isMidnight = true;
+    if (currentHour < 5) document.body.classList.add('midnight-theme');
+
+    // ── Config ────────────────────────────────────────────────────────────────
+    const startDate    = new Date('2025-03-28T00:00:00');
+    const CORRECT_CODE = '03282025';
+
+    const errorMessages = [
+        "ouch!! that's definitely wrong 😭 try again bestie",
+        "nope, not even close 💀 think harder!",
+        "baby no 😭 that's not it, try again!",
+        "wrong answer, but full marks for confidence 😂",
+        "my heart says no 💔 try again!",
+        "are you even trying?? 🥺 come on!",
+        "that hurt a little ngl 😔 wrong answer!",
+        "404: correct date not found 😅 try again?",
+        "sarthak would be disappointed rn 😤 try again!",
+        "lol no 😂 remember our anniversary babeee",
+    ];
+    let errorCount = 0;
+
+    // ── DOM refs ──────────────────────────────────────────────────────────────
+    const typewriterEl = document.getElementById('typewriter-text');
+    const appContainer = document.getElementById('main-app');
+    const lockScreen   = document.getElementById('lock-screen');
+    const lockInput    = document.getElementById('lock-input');
+    const errorText    = document.getElementById('error-text');
+    const audio        = document.getElementById('bg-music');
+    const vinylDisc    = document.getElementById('vinyl-icon');
+    const vinylToggle  = document.getElementById('vinyl-toggle');
+    const vinylLabel   = document.getElementById('vinyl-label');
+    const lineNumbers  = document.getElementById('line-numbers');
+    const typeCursor   = document.getElementById('type-cursor');
+    const cliWrapper   = document.getElementById('interactive-cli');
+    const cliInput     = document.getElementById('cli-input');
+
+    // ── Floating hearts (lock screen) ─────────────────────────────────────────
+    const floatContainer = document.getElementById('lock-float-hearts');
+    const heartChars = ['❤️','💕','🌸','💗','✨','💖','🩷'];
+    for (let i = 0; i < 18; i++) {
+        const el = document.createElement('span');
+        el.className = 'float-heart';
+        el.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+        el.style.cssText = `
+            left:${Math.random()*100}%;
+            font-size:${0.8+Math.random()*1.2}rem;
+            animation-duration:${6+Math.random()*8}s;
+            animation-delay:${Math.random()*8}s;
+        `;
+        floatContainer.appendChild(el);
     }
 
-    // Clean up stale key from prior version
-    localStorage.removeItem('unlocked');
-
-    // --- Configuration ---
-    const startDate = new Date('2025-08-03T00:00:00');
-
-    // DOM Elements
-    const typewriterElement = document.getElementById('typewriter-text');
-    const loveSection = document.getElementById('love-section');
-    const appContainer = document.getElementById('main-app');
-
-    const lockScreen = document.getElementById('lock-screen');
-    const lockInput = document.getElementById('lock-input');
-
-    const audio = document.getElementById('bg-music');
-    const vinylIcon = document.getElementById('vinyl-icon');
-    const vinylToggle = document.getElementById('vinyl-toggle');
-
-    // --- Audio Player Logic ---
+    // ── Audio ─────────────────────────────────────────────────────────────────
     let isPlaying = false;
-    audio.volume = 0; // start at 0 for fade-in
+    audio.volume  = 0;
 
-    // Check local storage so music keeps playing if they go to the gallery page
+    function setVinylState(playing) {
+        isPlaying = playing;
+        vinylDisc.classList.toggle('spinning', playing);
+        vinylLabel.textContent = playing ? '♫ playing' : '▶ play';
+        vinylLabel.classList.toggle('playing', playing);
+        localStorage.setItem('musicPlaying', playing ? 'true' : 'false');
+    }
+
     if (localStorage.getItem('musicPlaying') === 'true') {
-        isPlaying = true;
-        vinylIcon.classList.add('spinning');
+        const saved = parseFloat(localStorage.getItem('audioTime') || '0');
+        if (saved) audio.currentTime = saved;
         audio.volume = 0.5;
-
-        const savedTime = localStorage.getItem('audioTime');
-        if (savedTime) {
-            audio.currentTime = parseFloat(savedTime);
-        }
-        // Audio might still be blocked by browser autoplay policy until interacted, 
-        // but we attempt it anyway.
-        let playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(() => {
-                isPlaying = false;
-                vinylIcon.classList.remove('spinning');
-                localStorage.setItem('musicPlaying', 'false');
-            });
-        }
+        audio.play().then(() => setVinylState(true)).catch(() => setVinylState(false));
     }
 
     vinylToggle.addEventListener('click', () => {
-        if (isPlaying) {
-            fadeOutAudio();
-            vinylIcon.classList.remove('spinning');
-            localStorage.setItem('musicPlaying', 'false');
-            isPlaying = false;
-        } else {
-            audio.play();
-            fadeInAudio();
-            vinylIcon.classList.add('spinning');
-            localStorage.setItem('musicPlaying', 'true');
-            isPlaying = true;
-        }
+        if (isPlaying) { fadeOut(); setVinylState(false); }
+        else { audio.play().then(() => { fadeIn(); setVinylState(true); }); }
     });
 
     audio.addEventListener('timeupdate', () => {
-        if (isPlaying) {
-            localStorage.setItem('audioTime', audio.currentTime);
-        }
+        if (isPlaying) localStorage.setItem('audioTime', audio.currentTime);
     });
 
-    function fadeInAudio() {
-        let vol = 0;
-        audio.volume = vol;
-        let fade = setInterval(() => {
-            if (vol < 0.5) {
-                vol += 0.05;
-                audio.volume = Math.min(vol, 0.5);
-            } else {
-                clearInterval(fade);
-            }
-        }, 200);
+    function fadeIn() {
+        let v = 0; audio.volume = 0;
+        const t = setInterval(() => { v = Math.min(v+0.05, 0.5); audio.volume = v; if (v>=0.5) clearInterval(t); }, 100);
+    }
+    function fadeOut() {
+        let v = audio.volume;
+        const t = setInterval(() => { v = Math.max(v-0.05, 0); audio.volume = v; if (v<=0) { audio.pause(); clearInterval(t); } }, 100);
     }
 
-    function fadeOutAudio() {
-        let vol = audio.volume;
-        let fade = setInterval(() => {
-            if (vol > 0.05) {
-                vol -= 0.05;
-                audio.volume = Math.max(0, vol);
-            } else {
-                audio.volume = 0;
-                audio.pause();
-                clearInterval(fade);
-            }
-        }, 200);
+    // ── Lock screen ───────────────────────────────────────────────────────────
+    lockInput.addEventListener('input',   () => { if (lockInput.value.length === 8) setTimeout(checkPassword, 150); });
+    lockInput.addEventListener('keydown', e  => { if (e.key === 'Enter') checkPassword(); });
+    lockScreen.addEventListener('click',  () => lockInput.focus());
+
+    function checkPassword() {
+        if (lockInput.value === CORRECT_CODE) {
+            unlockSequence();
+        } else {
+            showError();
+            lockInput.value = '';
+        }
     }
 
-    // --- Lock Screen Logic ---
-    // Hash of the magic date so it's not readable in source code
-    const MAGIC_HASH = 'ac272bd1f7ce37039af72b443a53d8f24f364bb1343ab9f2af9907e1eca0d948';
-
-    async function sha256(str) {
-        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    function showError() {
+        const msg = errorMessages[errorCount % errorMessages.length];
+        errorCount++;
+        errorText.textContent = msg;
+        errorText.classList.remove('visible');
+        void errorText.offsetWidth;
+        errorText.classList.add('visible');
+        const wrap = document.querySelector('.lock-input-wrapper');
+        wrap.style.borderColor = 'var(--pink)';
+        wrap.style.boxShadow   = '0 0 0 3px rgba(255,42,95,0.28)';
+        setTimeout(() => { wrap.style.borderColor = ''; wrap.style.boxShadow = ''; }, 600);
     }
 
-    // Skip lock screen if already unlocked before (returning visitor)
     if (sessionStorage.getItem('unlocked') === 'true') {
         lockScreen.style.display = 'none';
         appContainer.classList.add('unlocked');
-        document.getElementById('story-section').classList.add('start-story');
-        setTimeout(typeWriter, 300);
+        setTimeout(startTypewriter, 300);
     }
-
-    lockScreen.addEventListener('click', () => {
-        lockInput.focus();
-    });
-
-    lockInput.addEventListener('input', async (e) => {
-        const hash = await sha256(e.target.value);
-        if (hash === MAGIC_HASH) {
-            unlockSequence();
-        }
-    });
 
     function unlockSequence() {
         lockInput.blur();
         sessionStorage.setItem('unlocked', 'true');
-
-        // Glitch the prompt text AND the entire lock screen
         document.querySelector('.lock-prompt').classList.add('glitching');
         lockScreen.classList.add('glitch-screen');
-
-        // Start music automatically
         if (!isPlaying) {
-            audio.play().then(() => {
-                fadeInAudio();
-                vinylIcon.classList.add('spinning');
-                localStorage.setItem('musicPlaying', 'true');
-                isPlaying = true;
-            }).catch(() => {
-                // Browser might still block until explicit click
-            });
+            audio.play().then(() => { fadeIn(); setVinylState(true); }).catch(() => {});
         }
-
-        // The screenGlitch animation lasts 0.8s and fades to opacity:0
         setTimeout(() => {
             lockScreen.style.display = 'none';
             appContainer.classList.add('unlocked');
-            document.getElementById('story-section').classList.add('start-story');
-            setTimeout(typeWriter, 500);
+            spawnHeartBurst();
+            setTimeout(startTypewriter, 500);
         }, 900);
     }
 
-    // --- Page Exit Transition ---
-    const heartLink = document.querySelector('.heart-link');
+    function spawnHeartBurst() {
+        for (let i = 0; i < 14; i++) {
+            const el = document.createElement('div');
+            el.textContent = ['❤️','💕','✨','💖','🌸'][Math.floor(Math.random()*5)];
+            el.style.cssText = `
+                position:fixed;left:50%;top:50%;
+                font-size:${1.2+Math.random()*1.5}rem;
+                pointer-events:none;z-index:9999;
+                transition:all ${0.8+Math.random()*0.5}s cubic-bezier(0.2,0,0,1);
+                transform:translate(-50%,-50%);
+            `;
+            document.body.appendChild(el);
+            requestAnimationFrame(() => {
+                const angle = Math.random() * Math.PI * 2;
+                const dist  = 80 + Math.random() * 180;
+                el.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+                el.style.opacity = '0';
+            });
+            setTimeout(() => el.remove(), 1500);
+        }
+    }
+
+    // ── Heart → gallery ───────────────────────────────────────────────────────
+    const heartLink = document.getElementById('heart-link');
     if (heartLink) {
-        heartLink.addEventListener('click', (e) => {
+        heartLink.addEventListener('click', e => {
             e.preventDefault();
             document.body.classList.add('page-exit');
-            setTimeout(() => {
-                window.location.href = heartLink.getAttribute('href');
-            }, 400);
+            setTimeout(() => { window.location.href = heartLink.getAttribute('href'); }, 400);
         });
     }
 
-    // --- The Story text ---
-    let storyHtml = `
-<span class="comment">/**</span>
-<span class="comment"> * THE CODE OF LOVE</span>
-<span class="comment"> */</span>
+    // ── Story text ────────────────────────────────────────────────────────────
+    let storyBase = `<span class="comment">/**
+ * OUR STORY
+ * kritika & sarthak.love
+ * since 28.03.2025
+ */</span>
 
-Hey Ajjjuuu!
-Do you remember the day our story began?
-<span class="comment">// August 3rd, 2025.</span>
-Since that day, I've been yours and there has been no looking back; 
-pata nahi kaise, I've always felt like we were meant to be;
-<span class="comment">// Your face, Your voice, Your words.</span>
-Your everything got imprinted in my heart;
-As the time went on,
-The bond grew stronger and stronger;
-sure we have had our fights;
-And I'm sure there will be many more;
-but our bond will always grow back stronger &lt;3; 
+Hey bebeeee !! ❤️
 
-All I want to say is:
-Bu, I will love you <span class="keyword">forever and ever</span>;
+Since the day I met you,
+everything in my life started to feel
+a little brighter and a lot more meaningful.
 
-<span class="comment">// Keep scrolling... &lt;3</span>`;
+Your smile became my favourite sight !!
+like literally… I can look at you all day
+and still not get tired 😭❤️
 
-    if (isMidnight) {
-        storyHtml += `\n\n<span class="keyword">system:</span> It's late, you should be sleeping, but I love you... go to bed.`;
+I'm truly grateful for you,
+for us,
+and for all the memories we're creating together.
+
+And that first time I hugged you 🫂…
+I don't think you even realize,
+but it felt like I had finally found a place
+where I truly belonged.
+
+Ik we fight a lottt 😭
+but yk na…
+ladna sab temporary hota hai,
+but this feeling of lovee…
+<span class="keyword">this is permanent.</span>
+
+I don't know what the future holds,
+but one thing I know for sure —
+
+<span class="keyword">I choose you. Every single day.</span>
+
+<span class="comment">// keep scrolling baby ❤️</span>`;
+
+    if (currentHour < 5) {
+        storyBase += `\n\n<span class="keyword">system:</span> <span class="comment">// It's late, go to bed. But I love you 🌙</span>`;
     }
 
-    // --- Typewriter Logic ---
-    let i = 0;
-    let isTag = false;
-    let text = storyHtml.trim();
+    // ── Typewriter engine ─────────────────────────────────────────────────────
+    // `source` is mutable — CLI commands append to it so the typewriter
+    // naturally continues from where it stopped.
+    let source   = storyBase.trim();
+    let pos      = 0;         // index of next char to reveal
+    let running  = false;     // prevents concurrent typewriter loops
+    let prevLines = 0;
 
-    function typeWriter() {
-        if (i < text.length) {
-            let currentStr = text.slice(0, i + 1);
-
-            if (text.charAt(i) === '<') isTag = true;
-            if (text.charAt(i) === '>') isTag = false;
-
-            if (text.charAt(i) === '&' && text.slice(i, i + 4) === '&lt;') {
-                i += 3;
-                currentStr = text.slice(0, i + 1);
-            }
-
-            typewriterElement.innerHTML = currentStr;
-            // Auto-scroll the terminal body so text stays visible on mobile
-            const windowBody = typewriterElement.closest('.window-body');
-            if (windowBody) windowBody.scrollTop = windowBody.scrollHeight;
-            i++;
-
-            let speed = isTag ? 0 : Math.random() * 40 + 30;
-
-            if (!isTag && (text.charAt(i - 1) === '.' || text.charAt(i - 1) === '?' || text.charAt(i - 1) === ';')) {
-                speed = 400;
-            }
-            if (!isTag && text.charAt(i - 1) === '\n') {
-                speed = 250;
-            }
-
-            setTimeout(typeWriter, speed);
-        } else {
-            document.getElementById('type-cursor').style.display = 'none';
-            const cli = document.getElementById('interactive-cli');
-            const cliInput = document.getElementById('cli-input');
-            cli.classList.add('active');
-            cliInput.focus();
+    function updateLineNumbers() {
+        const lines = (typewriterEl.innerText || '').split('\n').length;
+        if (lines !== prevLines) {
+            prevLines = lines;
+            lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i+1).join('<br>');
         }
     }
 
-    // --- Interactive CLI Logic ---
-    const cliInput = document.getElementById('cli-input');
-    const reasons = [
-        "1) i love the way i'm with YOUU",
-        "2) i love that you have the most sweetest and the most bful soul",
-        "3) i admire your strength and you motivate me in so many ways",
-        "4) my bful baby draws so well, i see my dad in your eyes",
-        "5) how great you are with children ( giving me kids when )",
-        "6) i feel like the entire universe is in my arms when we hug",
-        "7) your voice has to be the sweetest sound I've ever heard",
-        "8) your smell, YOU SMELL SO FREAKING GOOD",
-        "9) your taste in music, you're like literally my goddess i pray you atp",
-        "10) your open mind and your acceptance, you forgive me and you love me so deeply muah"
-    ];
-
-    // Escape HTML to prevent XSS from CLI input
-    function escapeHtml(str) {
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    function scrollCode() {
+        const wb = typewriterEl.closest('.window-body');
+        if (wb) wb.scrollTop = wb.scrollHeight;
     }
 
-    cliInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const val = cliInput.value.trim().toLowerCase();
-            cliInput.value = '';
+    function tick() {
+        running = true;
 
-            if (!val) return;
+        if (pos >= source.length) {
+            // Nothing left — show CLI
+            running = false;
+            typeCursor.style.display = 'none';
+            cliWrapper.classList.add('active');
+            setTimeout(() => cliInput.focus(), 80);
+            return;
+        }
 
-            const safeVal = escapeHtml(val);
-
-            // Hide CLI while typing command output
-            document.getElementById('interactive-cli').classList.remove('active');
-            document.getElementById('type-cursor').style.display = 'inline';
-
-            if (val === 'help') {
-                appendTerminalLine("\n> help\nAvailable commands: <span class='keyword'>reasons</span>, <span class='keyword'>memories</span>\n");
-            } else if (val === 'reasons') {
-                appendTerminalLine("\n> reasons\nFetching records from heart...\n" + reasons.join('\n') + "\n");
-            } else if (val === 'memories') {
-                appendTerminalLine("\n> memories\nAccessing memories...\n");
-                setTimeout(() => {
-                    const ls = document.getElementById('love-section');
-                    ls.style.display = 'flex';
-                    ls.style.visibility = 'visible';
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => ls.classList.add('visible'));
-                    });
-                }, 1500);
-            } else {
-                appendTerminalLine(`\n> ${safeVal}\nCommand not found: ${safeVal}. Type 'help'.\n`);
+        // If the next character starts an HTML tag, skip the whole tag in one go
+        if (source[pos] === '<') {
+            const end = source.indexOf('>', pos);
+            if (end !== -1) {
+                pos = end + 1;
+                typewriterEl.innerHTML = source.slice(0, pos);
+                updateLineNumbers();
+                scrollCode();
+                setTimeout(tick, 0);   // 0ms — tags are invisible
+                return;
             }
+        }
+
+        // Visible character
+        const ch = source[pos];
+        pos++;
+        typewriterEl.innerHTML = source.slice(0, pos);
+        updateLineNumbers();
+        scrollCode();
+
+        let delay = 26 + Math.random() * 30;
+        if (ch === '.' || ch === '!' || ch === '?') delay = 360;
+        else if (ch === '\n')                        delay = 170;
+        else if (ch === ',')                         delay = 110;
+
+        setTimeout(tick, delay);
+    }
+
+    function startTypewriter() {
+        typeCursor.style.display = 'inline';
+        cliWrapper.classList.remove('active');
+        if (!running) tick();
+    }
+
+    // Append text from CLI commands and resume typewriter if not already running
+    function appendLines(html) {
+        source += html;
+        typeCursor.style.display = 'inline';
+        cliWrapper.classList.remove('active');
+        if (!running) tick();
+    }
+
+    // ── CLI ───────────────────────────────────────────────────────────────────
+    const reasons = [
+        '1)  The way you smile at me… everything just feels right in that moment 😊',
+        '2)  Tu jab saath ho toh sab theek lagta hai, even the worst days become bearable',
+        '3)  Your voice… literally mera comfort zone hai, sunke hi sukoon milta hai 🎵',
+        '4)  Your childish side… honestly I love it the most 😭❤️',
+        '5)  The way you care for me… it makes me feel so incredibly lucky',
+        '6)  With you, I feel safe… like duniya kuch bhi kare, I have you 🛡️',
+        "7)  Your little jealous moments… I tease you but secretly they're sooo cute 😏",
+        '8)  Your hugs… bas wahi meri peace hai, sab problems wahi khatam 🫂',
+        "9)  Your music taste… not always perfect but still my favourite because it's yours 😂",
+        '10) And honestly… I love you simply because you\'re YOU ❤️',
+        '11) Aur sach bolu… I don\'t even need reasons, I just love you ❤️',
+    ];
+
+    function esc(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    cliInput.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const val = cliInput.value.trim().toLowerCase();
+        cliInput.value = '';
+        if (!val) return;
+
+        cliWrapper.classList.remove('active');
+
+        if (val === 'help') {
+            appendLines(
+                '\n<span class="comment">// available commands:</span>\n' +
+                '  <span class="keyword">reasons</span>   — why I love you (the list is endless)\n' +
+                '  <span class="keyword">memories</span>  — open our photo gallery 💕\n'
+            );
+        } else if (val === 'reasons') {
+            appendLines(
+                '\n<span class="comment">// fetching records from heart.db…</span>\n\n' +
+                reasons.join('\n') + '\n'
+            );
+        } else if (val === 'memories') {
+            appendLines('\n<span class="comment">// loading memories… this might make you smile 💕</span>\n');
+            setTimeout(() => {
+                const ls = document.getElementById('love-section');
+                ls.style.display = 'flex';
+                ls.style.visibility = 'visible';
+                requestAnimationFrame(() => requestAnimationFrame(() => ls.classList.add('visible')));
+                setTimeout(() => ls.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+            }, 1400);
+        } else {
+            appendLines(
+                `\n<span class="comment">// command not found: ${esc(val)}</span>\n` +
+                `<span class="keyword">hint:</span> type '<span class="keyword">help</span>' for available commands\n`
+            );
         }
     });
 
-    function appendTerminalLine(str) {
-        text += str;
-        typeWriter();
-    }
-
-    // --- Timer Logic ---
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-
+    // ── Timer ─────────────────────────────────────────────────────────────────
     function updateTimer() {
-        const now = new Date();
-        const diff = now - startDate;
-        const past = Math.max(0, diff);
-
-        const days = Math.floor(past / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((past % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((past % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((past % (1000 * 60)) / 1000);
-
-        daysEl.innerText = days;
-        hoursEl.innerText = hours.toString().padStart(2, '0');
-        minutesEl.innerText = minutes.toString().padStart(2, '0');
-        secondsEl.innerText = seconds.toString().padStart(2, '0');
+        const diff = Math.max(0, Date.now() - startDate);
+        document.getElementById('days').textContent    = Math.floor(diff / 86400000);
+        document.getElementById('hours').textContent   = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+        document.getElementById('minutes').textContent = String(Math.floor((diff % 3600000)  / 60000)).padStart(2,'0');
+        document.getElementById('seconds').textContent = String(Math.floor((diff % 60000)    / 1000)).padStart(2,'0');
     }
-
     updateTimer();
     setInterval(updateTimer, 1000);
 
-    // --- Background Canvas Animations (Terminal Bits/Petals) with Physics ---
+    // ── Background petal canvas ───────────────────────────────────────────────
     const canvas = document.getElementById('falling-petals');
-    const ctx = canvas.getContext('2d');
+    const ctx    = canvas.getContext('2d');
+    let W, H, mx = -1000, my = -1000;
+    const petals = [];
 
-    let width, height;
-    let petals = [];
+    window.addEventListener('mousemove',  e => { mx = e.clientX; my = e.clientY; });
+    window.addEventListener('touchmove',  e => { if (e.touches.length) { mx = e.touches[0].clientX; my = e.touches[0].clientY; } }, { passive: true });
+    window.addEventListener('mouseout',   () => { mx = -1000; my = -1000; });
 
-    // Track pointer coordinates for interactive physics
-    let mouse = { x: -1000, y: -1000 };
-
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    });
-
-    window.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-        }
-    });
-
-    // Reset mouse pos when off screen
-    window.addEventListener('mouseout', () => {
-        mouse.x = -1000;
-        mouse.y = -1000;
-    });
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize);
     resize();
 
     class Petal {
-        constructor() {
+        constructor(init) {
+            this.type = Math.random() < 0.6 ? 'dot' : Math.random() < 0.6 ? 'sparkle' : 'heart';
             this.reset();
-            this.y = Math.random() * height;
+            if (init) this.y = Math.random() * H;
         }
-
         reset() {
-            this.x = Math.random() * width;
-            this.y = -20;
-            this.size = Math.random() * 3 + 1;
-            this.speedY = Math.random() * 1 + 0.5;
-            this.speedX = Math.random() * 0.5 - 0.25;
-            this.color = `rgba(255, 105, 180, ${Math.random() * 0.3 + 0.1})`;
+            this.x  = Math.random() * W;
+            this.y  = -20;
+            this.sz = Math.random() * 4 + 1.5;
+            this.vy = Math.random() * 0.8 + 0.4;
+            this.vx = Math.random() * 0.4 - 0.2;
+            this.a  = Math.random() * Math.PI * 2;
+            this.da = (Math.random() - 0.5) * 0.04;
+            const al  = Math.random() * 0.25 + 0.08;
+            const rgb = Math.random() < 0.7 ? '255,42,95' : Math.random() < 0.5 ? '195,155,211' : '255,182,193';
+            this.color = `rgba(${rgb},${al})`;
         }
-
         update() {
-            // Apply normal gravity
-            this.y += this.speedY;
-            this.x += this.speedX + Math.sin(this.y * 0.01) * 0.3;
-
-            // Physics Logic: Interaction with mouse
-            let dx = mouse.x - this.x;
-            let dy = mouse.y - this.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-
-            let interactRadius = 150; // The force field size
-
-            if (distance < interactRadius) {
-                // Calculate push force based on how close they are
-                let forceDirectionX = -dx / distance;
-                let forceDirectionY = -dy / distance;
-                let forceMultiplier = (interactRadius - distance) / interactRadius;
-
-                // Set max repel force
-                let repelSpeed = 5;
-
-                this.x += forceDirectionX * forceMultiplier * repelSpeed;
-                this.y += forceDirectionY * forceMultiplier * repelSpeed;
+            this.y += this.vy;
+            this.x += this.vx + Math.sin(this.y * 0.008) * 0.4;
+            this.a += this.da;
+            const dx = mx - this.x, dy = my - this.y, d = Math.hypot(dx, dy);
+            if (d < 130 && d > 0) {
+                const f = (130 - d) / 130;
+                this.x -= (dx / d) * f * 4;
+                this.y -= (dy / d) * f * 4;
             }
-
-            if (this.y > height + 20) {
-                this.reset();
-            }
+            if (this.y > H + 30) this.reset();
         }
-
         draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.save();
+            ctx.fillStyle = ctx.strokeStyle = this.color;
+            if (this.type === 'dot') {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.sz, 0, Math.PI*2); ctx.fill();
+            } else if (this.type === 'sparkle') {
+                ctx.translate(this.x, this.y); ctx.rotate(this.a); ctx.lineWidth = 1;
+                for (let k = 0; k < 4; k++) {
+                    ctx.beginPath(); ctx.moveTo(0, -this.sz*1.4); ctx.lineTo(0, this.sz*1.4); ctx.stroke();
+                    ctx.rotate(Math.PI / 4);
+                }
+            } else {
+                ctx.translate(this.x, this.y);
+                const u = this.sz * 0.55;
+                ctx.fillRect(-u*2,-u*2,u*2,u); ctx.fillRect(u,-u*2,u*2,u);
+                ctx.fillRect(-u*3,-u,u*6,u*2); ctx.fillRect(-u*2,u,u*5,u);
+                ctx.fillRect(-u,u*2,u*3,u);    ctx.fillRect(0,u*3,u,u);
+            }
+            ctx.restore();
         }
     }
 
-    for (let i = 0; i < 60; i++) {
-        petals.push(new Petal());
-    }
+    for (let i = 0; i < 70; i++) petals.push(new Petal(true));
 
-    function animateBg() {
-        ctx.clearRect(0, 0, width, height);
-        for (let petal of petals) {
-            petal.update();
-            petal.draw();
-        }
-        requestAnimationFrame(animateBg);
-    }
-
-    animateBg();
+    (function loop() {
+        ctx.clearRect(0, 0, W, H);
+        petals.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(loop);
+    })();
 });
